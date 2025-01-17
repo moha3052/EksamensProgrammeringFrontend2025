@@ -2,9 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DronePizza Leveringer</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
 </head>
 <body>
+<h1>DronePizza Leveringer</h1>
 
+<!-- Leveringer sektion -->
+<section id="delivery-section">
+    <h2>Ikke-leverede Leveringer</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Levering ID</th>
+            <th>Pizza</th>
+            <th>Adresse</th>
+            <th>Forventet Levering</th>
+            <th>Status</th>
+            <th>Handlinger</th>
+        </tr>
+        </thead>
+        <tbody id="deliveries-table">
+        <!-- Dynamisk indhold indsættes her -->
+        </tbody>
+    </table>
+</section>
+
+<!-- Opret ny levering -->
+<dialog id="create-delivery-dialog">
+    <h2>Opret ny Levering</h2>
+    <form id="create-delivery-form">
+        <label for="adresse">Adresse:</label>
+        <input type="text" id="adresse" required placeholder="Indtast adresse">
+        <div>
+            <button type="submit">Simuler Levering</button>
+            <button type="button" id="close-dialog">Annuller</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- Button to open dialog -->
+<button id="open-dialog">Opret ny Levering</button>
+
+<!-- Droner sektion -->
+<section id="drone-section">
+    <h2>Droner</h2>
+    <button id="add-drone">Opret ny Drone</button>
+</section>
+
+<script src="../JS/script.js"></script>
 </body>
 </html>

@@ -1,0 +1,214 @@
+/* GLOBAL STYLING */
+/* Indstil grundlæggende typografi og layout for hele siden */
+body {
+    font-family: 'Arial', sans-serif; /* Standard sans-serif skrifttype for læsbarhed */
+    margin: 20px; /* Plads omkring siden */
+    background-color: #f9f9f9; /* Lys baggrund for en behagelig visning */
+    color: #333; /* Mørk tekst for bedre kontrast */
+    line-height: 1.6; /* Forbedret linjeafstand for læsbarhed */
+}
+
+/* TABLE STYLING */
+/* Stilindstillinger for tabellen */
+table {
+    width: 100%; /* Gør tabellen bred som containeren */
+    border-collapse: collapse; /* Fjern mellemrum mellem celler */
+    margin-bottom: 20px; /* Plads under tabellen */
+    background-color: white; /* Hvid baggrund for ren visning */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtil skygge for et hævet look */
+    border-radius: 8px; /* Rundede hjørner for en blødere æstetik */
+    overflow: hidden; /* Sørg for, at indholdet forbliver inden for kanterne */
+}
+
+/* Styling for celler i tabellen */
+th, td {
+    padding: 12px 15px; /* Mere plads i cellerne for bedre læsbarhed */
+    border-bottom: 1px solid #ddd; /* Tynd kant under hver række */
+    text-align: left; /* Venstrestil tekst i celler */
+}
+
+/* Styling for tabeloverskrifter */
+th {
+    background-color: #007BFF; /* Blå baggrund for overskrifter */
+    color: white; /* Hvid tekst for høj kontrast */
+    text-transform: uppercase; /* Gør tekst i overskrifter store bogstaver */
+    font-size: 14px; /* Ensartet skrifttypestørrelse */
+}
+
+/* Styling for tabelrækker */
+td {
+    font-size: 14px; /* Standard størrelse for tabelindhold */
+}
+
+/* Alternativ baggrund for hver anden række */
+tr:nth-child(even) {
+    background-color: #f4f4f4; /* Lys grå baggrund for at skelne mellem rækker */
+}
+
+/* Hover-effekt for rækker */
+tr:hover {
+    background-color: #e9ecef; /* Lysere baggrund ved hover for interaktiv feedback */
+}
+
+/* BUTTON STYLING */
+/* Grundlæggende styling for knapper */
+button {
+    padding: 10px 15px; /* Komfortabel plads til tekst og klikområder */
+    margin: 5px 0; /* Plads omkring knappen */
+    background-color: #007BFF; /* Primær blå farve for knapper */
+    color: white; /* Hvid tekst for kontrast */
+    border: none; /* Fjern standard kant */
+    cursor: pointer; /* Markør ændres til pegerhånd for klikbare elementer */
+    border-radius: 5px; /* Rundede hjørner for et moderne look */
+    font-size: 14px; /* Standard skrifttypestørrelse */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Glatte animationer for hover-effekter */
+}
+
+/* Hover-effekt for knapper */
+button:hover {
+    background-color: #0056b3; /* Mørkere blå ved hover */
+    transform: translateY(-2px); /* Løft knappen let ved hover */
+}
+
+/* Klik-effekt for knapper */
+button:active {
+    background-color: #004085; /* Endnu mørkere blå ved klik */
+    transform: translateY(0); /* Fjern løft ved klik */
+}
+
+/* STATUS STYLING */
+/* Stil for status "mangler drone" */
+.status-missing {
+    color: #dc3545; /* Rød farve for at indikere en fejl */
+    font-weight: bold; /* Gør teksten fed for synlighed */
+}
+
+/* Stil for status "drone tildelt" */
+.status-assigned {
+    color: #28a745; /* Grøn farve for at indikere succes */
+    font-weight: bold; /* Gør teksten fed for synlighed */
+}
+
+/* RESPONSIVE DESIGN */
+/* Stil til skærme med en bredde på maks. 768px */
+@media (max-width: 768px) {
+    table {
+        font-size: 12px; /* Mindre tekststørrelse på små skærme */
+    }
+
+    button {
+        font-size: 12px; /* Mindre knapper på små skærme */
+        padding: 8px 10px; /* Mindre plads til knapper */
+    }
+
+    th, td {
+        padding: 10px; /* Mindre plads i celler */
+    }
+}
+
+/* DIALOG STYLING */
+dialog {
+    border: none;
+    border-radius: 8px; /* Afrundede hjørner */
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Let skygge for hævet udseende */
+    max-width: 400px;
+    width: 90%;
+    background-color: white;
+    overflow: hidden; /* Forhindrer overskydende indhold */
+    margin: auto; /* Centrer dialogen */
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5); /* Mørk baggrund for fokus */
+}
+
+/* Dialogens overskrift */
+dialog h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #333; /* Mørk tekstfarve */
+}
+
+/* Input felt */
+dialog input[type="text"] {
+    width: 100%; /* Fyld bredden af dialogen */
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Dialog knapper */
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; /* Mellemrum mellem knapper */
+}
+
+.submit-button {
+    background-color: #28a745; /* Grøn for succes */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+.cancel-button {
+    background-color: #dc3545; /* Rød for annullering */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cancel-button:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+/* Knappen for at åbne dialog */
+.open-dialog-button {
+    background-color: #007BFF; /* Primær blå */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.open-dialog-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    dialog {
+        width: 100%; /* Fylder hele skærmen på små enheder */
+    }
+
+    dialog input[type="text"] {
+        font-size: 12px; /* Mindre tekst i inputfelter */
+        padding: 8px; /* Mindre plads */
+    }
+
+    .dialog-buttons button {
+        font-size: 12px; /* Mindre knapper */
+        padding: 8px 10px;
+    }
+}
+
+
+
