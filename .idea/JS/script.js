@@ -57,26 +57,23 @@ async function fetchDeliveries() {
 
 // Tildel en drone til en levering
 async function assignDrone(deliveryId) {
-    const droneId = prompt("Indtast Drone ID:");
-    if (!droneId) {
-        alert("Du skal indtaste et gyldigt Drone ID.");
-        return;
-    }
-
     try {
-        const response = await fetch(`${deliveriesUrl}/schedule/${deliveryId}/${droneId}`, { method: "PUT" });
-        if (response.ok) {
-            alert("Drone tildelt!");
-            fetchDeliveries(); // Opdater listen
-        } else {
-            const error = await response.text();
-            alert(`Kunne ikke tildele drone: ${error}`);
-        }
+        const drones = await (await fetch(dronesUrl)).json();
+        const availableDrone = drones.find(drone => drone.driftsstatus === "I_DRIFT");
+        if (!availableDrone) return alert("Ingen droner er tilgængelige i drift.");
+
+        const response = await fetch(`${deliveriesUrl}/schedule/${deliveryId}/${availableDrone.id}`, { method: "PUT" });
+        response.ok
+            ? (alert(`Drone ${availableDrone.serial_uuid} er tildelt til levering ${deliveryId}!`), fetchDeliveries())
+            : alert(`Kunne ikke tildele drone: ${await response.text()}`);
     } catch (error) {
-        console.error("Fejl under tildeling af drone:", error);
+        console.error("Fejl:", error);
         alert("En fejl opstod. Prøv igen.");
     }
 }
+
+
+
 
 // Markér en levering som færdig
 async function markAsDelivered(deliveryId) {
@@ -95,36 +92,36 @@ async function markAsDelivered(deliveryId) {
     }
 }
 
-// Opret en ny levering
-async function createDelivery(event) {
-    event.preventDefault(); // Forhindrer siden i at genindlæses
-
-    const adresse = document.getElementById("adresse").value;
-
-    const newDelivery = {
-        adresse,
-        pizza: { id: 1 } // Forudsætter en pizza med ID 1 findes i databasen
-    };
-
-    try {
-        const response = await fetch(`${deliveriesUrl}/add`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newDelivery)
-        });
-
-        if (response.ok) {
-            alert("Levering oprettet!");
-            fetchDeliveries(); // Opdater listen
-            document.getElementById("create-delivery-form").reset(); // Nulstil formular
-        } else {
-            const error = await response.text();
-            alert(`Kunne ikke oprette levering: ${error}`);
-        }
-    } catch (error) {
-        console.error("Fejl ved oprettelse af levering:", error);
-    }
-}
+// // Opret en ny levering
+// async function createDelivery(event) {
+//     event.preventDefault(); // Forhindrer siden i at genindlæses
+//
+//     const adresse = document.getElementById("adresse").value;
+//
+//     const newDelivery = {
+//         adresse,
+//         pizza: { id: 1 } // Forudsætter en pizza med ID 1 findes i databasen
+//     };
+//
+//     try {
+//         const response = await fetch(`${deliveriesUrl}/add`, {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify(newDelivery)
+//         });
+//
+//         if (response.ok) {
+//             alert("Levering oprettet!");
+//             fetchDeliveries(); // Opdater listen
+//             document.getElementById("create-delivery-form").reset(); // Nulstil formular
+//         } else {
+//             const error = await response.text();
+//             alert(`Kunne ikke oprette levering: ${error}`);
+//         }
+//     } catch (error) {
+//         console.error("Fejl ved oprettelse af levering:", error);
+//     }
+// }
 
 // Tilføj en ny drone
 async function addDrone() {
