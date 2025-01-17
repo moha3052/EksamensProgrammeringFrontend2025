@@ -1,7 +1,8 @@
+// API URLs
 const deliveriesUrl = "http://localhost:8080/levering";
 const dronesUrl = "http://localhost:8080/drones";
 
-// Initialiser funktioner
+// Initialiser funktioner ved DOM-load
 document.addEventListener("DOMContentLoaded", () => {
     fetchDeliveries();
     document.getElementById("add-drone").addEventListener("click", addDrone);
@@ -14,13 +15,14 @@ async function fetchDeliveries() {
         const response = await fetch(`${deliveriesUrl}/unfinished`);
         const deliveries = await response.json();
 
+        // Opdater tabel med leveringer
         const deliveriesTable = document.getElementById("deliveries-table");
         deliveriesTable.innerHTML = ""; // Ryd tabellen før opdatering
 
         deliveries.forEach(delivery => {
             const row = document.createElement("tr");
 
-            // Formatér datoer, hvis de findes
+            // Formatér datoer
             const expectedDelivery = delivery.forventet_levering
                 ? new Date(delivery.forventet_levering).toLocaleString()
                 : "Ikke angivet";
@@ -33,7 +35,7 @@ async function fetchDeliveries() {
                 ? `<span class="status-assigned">Drone: ${delivery.drone.serial_uuid}</span>`
                 : '<span class="status-missing">Mangler drone</span>';
 
-            // Tilføj rækker til tabellen
+            // Byg HTML for rækken
             row.innerHTML = `
                 <td>${delivery.id}</td>
                 <td>${delivery.pizza.name}</td>
@@ -58,30 +60,41 @@ async function fetchDeliveries() {
 // Tildel en drone til en levering
 async function assignDrone(deliveryId) {
     try {
-        const drones = await (await fetch(dronesUrl)).json();
+        const drones = await fetch(dronesUrl).then(res => res.json());
         const availableDrone = drones.find(drone => drone.driftsstatus === "I_DRIFT");
-        if (!availableDrone) return alert("Ingen droner er tilgængelige i drift.");
 
-        const response = await fetch(`${deliveriesUrl}/schedule/${deliveryId}/${availableDrone.id}`, { method: "PUT" });
-        response.ok
-            ? (alert(`Drone ${availableDrone.serial_uuid} er tildelt til levering ${deliveryId}!`), fetchDeliveries())
-            : alert(`Kunne ikke tildele drone: ${await response.text()}`);
+        if (!availableDrone) {
+            alert("Ingen droner er tilgængelige i drift.");
+            return;
+        }
+
+        const response = await fetch(`${deliveriesUrl}/schedule/${deliveryId}/${availableDrone.id}`, {
+            method: "PUT",
+        });
+
+        if (response.ok) {
+            alert(`Drone ${availableDrone.serial_uuid} er tildelt til levering ${deliveryId}!`);
+            fetchDeliveries();
+        } else {
+            const errorText = await response.text();
+            alert(`Kunne ikke tildele drone: ${errorText}`);
+        }
     } catch (error) {
         console.error("Fejl:", error);
         alert("En fejl opstod. Prøv igen.");
     }
 }
 
-
-
-
 // Markér en levering som færdig
 async function markAsDelivered(deliveryId) {
     try {
-        const response = await fetch(`${deliveriesUrl}/finish/${deliveryId}`, { method: "PUT" });
+        const response = await fetch(`${deliveriesUrl}/finish/${deliveryId}`, {
+            method: "PUT",
+        });
+
         if (response.ok) {
             alert("Levering markeret som fuldført!");
-            fetchDeliveries(); // Opdater listen
+            fetchDeliveries();
         } else {
             const error = await response.text();
             alert(`Kunne ikke markere levering som fuldført: ${error}`);
@@ -92,41 +105,11 @@ async function markAsDelivered(deliveryId) {
     }
 }
 
-// // Opret en ny levering
-// async function createDelivery(event) {
-//     event.preventDefault(); // Forhindrer siden i at genindlæses
-//
-//     const adresse = document.getElementById("adresse").value;
-//
-//     const newDelivery = {
-//         adresse,
-//         pizza: { id: 1 } // Forudsætter en pizza med ID 1 findes i databasen
-//     };
-//
-//     try {
-//         const response = await fetch(`${deliveriesUrl}/add`, {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify(newDelivery)
-//         });
-//
-//         if (response.ok) {
-//             alert("Levering oprettet!");
-//             fetchDeliveries(); // Opdater listen
-//             document.getElementById("create-delivery-form").reset(); // Nulstil formular
-//         } else {
-//             const error = await response.text();
-//             alert(`Kunne ikke oprette levering: ${error}`);
-//         }
-//     } catch (error) {
-//         console.error("Fejl ved oprettelse af levering:", error);
-//     }
-// }
-
 // Tilføj en ny drone
 async function addDrone() {
     try {
         const response = await fetch(`${dronesUrl}/add`, { method: "POST" });
+
         if (response.ok) {
             alert("Drone oprettet!");
         } else {
