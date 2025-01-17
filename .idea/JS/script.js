@@ -8,36 +8,44 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("create-delivery-form").addEventListener("submit", createDelivery);
 });
 
-// Henter og viser alle leveringer
+// Hent og vis alle leveringer
 async function fetchDeliveries() {
     try {
         const response = await fetch(`${deliveriesUrl}/unfinished`);
         const deliveries = await response.json();
 
         const deliveriesTable = document.getElementById("deliveries-table");
-        deliveriesTable.innerHTML = ""; // Ryd tabelens indhold før opdatering
+        deliveriesTable.innerHTML = ""; // Ryd tabellen før opdatering
 
         deliveries.forEach(delivery => {
             const row = document.createElement("tr");
 
+            // Formatér datoer, hvis de findes
             const expectedDelivery = delivery.forventet_levering
                 ? new Date(delivery.forventet_levering).toLocaleString()
                 : "Ikke angivet";
+
+            const actualDelivery = delivery.faktisk_levering
+                ? new Date(delivery.faktisk_levering).toLocaleString()
+                : "Ikke leveret";
 
             const droneStatus = delivery.drone
                 ? `<span class="status-assigned">Drone: ${delivery.drone.serial_uuid}</span>`
                 : '<span class="status-missing">Mangler drone</span>';
 
+            // Tilføj rækker til tabellen
             row.innerHTML = `
                 <td>${delivery.id}</td>
                 <td>${delivery.pizza.name}</td>
                 <td>${delivery.adresse}</td>
                 <td>${expectedDelivery}</td>
+                <td>${actualDelivery}</td>
                 <td class="${delivery.drone ? 'status-assigned' : 'status-missing'}">
                     ${droneStatus}
                 </td>
                 <td>
                     <button onclick="assignDrone(${delivery.id})">Tildel Drone</button>
+                    <button onclick="markAsDelivered(${delivery.id})">Markér som Leveret</button>
                 </td>
             `;
             deliveriesTable.appendChild(row);
@@ -47,33 +55,7 @@ async function fetchDeliveries() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const dialog = document.getElementById("create-delivery-dialog");
-    const openDialogButton = document.getElementById("open-dialog");
-    const closeDialogButton = document.getElementById("close-dialog");
-
-    // Åbn dialogen
-    openDialogButton.addEventListener("click", () => {
-        dialog.showModal();
-    });
-
-    // Luk dialogen
-    closeDialogButton.addEventListener("click", () => {
-        dialog.close();
-    });
-
-    // Håndter form-indsendelse
-    const form = document.getElementById("create-delivery-form");
-    form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const adresse = document.getElementById("adresse").value;
-        console.log(`Levering oprettet til: ${adresse}`);
-        dialog.close();
-    });
-});
-
-
-// Tildeler en drone til en levering
+// Tildel en drone til en levering
 async function assignDrone(deliveryId) {
     const droneId = prompt("Indtast Drone ID:");
     if (!droneId) {
@@ -96,7 +78,24 @@ async function assignDrone(deliveryId) {
     }
 }
 
-// Opretter en ny levering
+// Markér en levering som færdig
+async function markAsDelivered(deliveryId) {
+    try {
+        const response = await fetch(`${deliveriesUrl}/finish/${deliveryId}`, { method: "PUT" });
+        if (response.ok) {
+            alert("Levering markeret som fuldført!");
+            fetchDeliveries(); // Opdater listen
+        } else {
+            const error = await response.text();
+            alert(`Kunne ikke markere levering som fuldført: ${error}`);
+        }
+    } catch (error) {
+        console.error("Fejl under markering af levering:", error);
+        alert("En fejl opstod. Prøv igen.");
+    }
+}
+
+// Opret en ny levering
 async function createDelivery(event) {
     event.preventDefault(); // Forhindrer siden i at genindlæses
 
@@ -127,7 +126,7 @@ async function createDelivery(event) {
     }
 }
 
-// Tilføjer en ny drone
+// Tilføj en ny drone
 async function addDrone() {
     try {
         const response = await fetch(`${dronesUrl}/add`, { method: "POST" });
